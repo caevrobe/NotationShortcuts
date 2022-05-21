@@ -18,6 +18,9 @@ class KeyTracker {
    }
 
    get keys() {
+      if (this.#pressed.size === 0)
+         this.#combo.clear();
+
       return this.#combo;
    }
 

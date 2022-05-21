@@ -20,6 +20,26 @@
          display: flex;
          gap: 0.5em;
       }
+
+      table {
+         border-collapse: collapse;
+      }
+
+      table, td  {
+         border: 1px solid;
+      }
+
+      th {
+         padding: 0.25em;
+         background-color: black;
+         color: white;
+      }
+
+      td {
+         padding: 0.5em;
+         white-space: nowrap;
+      }
+
    </style>
       <script src="../keys.js"></script>
       <script src="settings.js" defer></script>
@@ -27,12 +47,20 @@
    <body>
       <input type="button" id="submit" value="add hotkey" />
 
-      <br>
-      <br>
-   
+      <br><br><br>
+
       <p>Search hotkeys:</p>
       <input type="text" class="keyEntry" id="searchBar" autocomplete="off" />
-   
-      <p id="temp"></p>
+      <br><br>
+
+
+      <table id="mappings">
+         <th>Selector</th>
+         <th>Shortcut</th>
+         <tr id="selectors">
+         </tr>
+         <tr id="shortcuts">
+         </tr>
+      </table>
    </body>
 </html>

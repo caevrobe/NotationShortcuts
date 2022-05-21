@@ -13,3 +13,5 @@ TODO:
    * make hotkey order-insensitive??
    * https://stackoverflow.com/questions/1391278/contenteditable-change-events
    * https://stackoverflow.com/questions/48620183/chrome-extension-how-to-send-message-from-content-js-to-popup-js-page-action
+   * make table rows scrollable (https://stackoverflow.com/questions/17067294/html-table-with-100-width-with-vertical-scroll-inside-tbody)
+   * move add button below table

@@ -19,3 +19,25 @@ chrome.runtime.onInstalled.addListener(function() {
          }]);
       });
 });
+
+
+chrome.runtime.onMessage.addListener(
+   function(request, sender, sendResponse) {
+      saveSelector(request.selector);
+      console.log('background');
+      return true;
+   }
+)
+
+function saveSelector(sel) {
+   chrome.storage.local.get({hotkeys: {}}, (result) => {
+      let hotkeys = result.hotkeys;
+
+      hotkeys[sel] = null;
+      console.log(hotkeys);
+      chrome.storage.local.set({hotkeys: hotkeys}, (idk) => {
+         console.log(idk);
+         console.log('Value is set to ',hotkeys);
+      });
+   });
+}
