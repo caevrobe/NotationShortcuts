@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+   <head>
+      <style>
+      body {
+         padding: 1em;
+         font-family: 'Segoe UI';
+      }
+      
+      input[type="text"] {
+         width: auto;
+      }
+      
+      p {
+         margin: 0 0 0.5em 0;
+      }
+
+      .row {
+         display: flex;
+         gap: 0.5em;
+      }
+   </style>
+      <script src="../keys.js"></script>
+      <script src="settings.js" defer></script>
+   </head>
+   <body>
+      <input type="button" id="submit" value="add hotkey" />
+
+      <br>
+      <br>
+   
+      <p>Search hotkeys:</p>
+      <input type="text" class="keyEntry" id="searchBar" autocomplete="off" />
+   
+      <p id="temp"></p>
+   </body>
+</html>
