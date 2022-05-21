@@ -96,6 +96,10 @@ chrome.storage.local.get({ hotkeys: {} }, (result) => {
       m_cell.innerText = v;
       m_cell.addEventListener('keydown', keyDown);
       m_cell.addEventListener('keyup', keyUp);
+
+      m_cell.addEventListener('focusout', (e) => {
+         chrome.runtime.sendMessage({selector: k, keycode: m_cell.innerText});
+      });
    }
 });
 

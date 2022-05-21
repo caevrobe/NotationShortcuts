@@ -20,20 +20,20 @@ chrome.runtime.onInstalled.addListener(function() {
       });
 });
 
-
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {
-      saveSelector(request.selector);
+      console.log(request);
+      saveSelector(request.selector, request.keycode || null);
       console.log('background');
       return true;
    }
 )
 
-function saveSelector(sel) {
+function saveSelector(sel, kcode) {
    chrome.storage.local.get({hotkeys: {}}, (result) => {
       let hotkeys = result.hotkeys;
 
-      hotkeys[sel] = null;
+      hotkeys[sel] = kcode;
       console.log(hotkeys);
       chrome.storage.local.set({hotkeys: hotkeys}, (idk) => {
          console.log(idk);

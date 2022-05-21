@@ -18,8 +18,9 @@ document.addEventListener('keyup', (e) => {
    kt.keyUp(e);
 
    if (kt.done) {
-      console.log(kt.keys);
-      cases[[...kt.keys].join('-')].click();
+      let key = [...kt.keys].join('-');
+
+      cases[key]?.click();
    }
 });
 

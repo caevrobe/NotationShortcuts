@@ -18,8 +18,8 @@ class KeyTracker {
    }
 
    get keys() {
-      if (this.#pressed.size === 0)
-         this.#combo.clear();
+      /* if (this.#pressed.size === 0)
+         this.#combo.clear(); */ // need this for text input but not for actually using
 
       return this.#combo;
    }
