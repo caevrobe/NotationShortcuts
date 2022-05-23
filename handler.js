@@ -1,65 +1,80 @@
-let cases = {
+let hotkeys = {
    'ALT-ARROWLEFT': document.querySelector('button[data-code="12"]'),
    'ALT-ARROWRIGHT': document.querySelector('button[data-code="13"]'),
 };
 
-let pressed = new Set();
-let currentChord = new Set();
+chrome.runtime.sendMessage({
+   route: 'b:get_hotkeys'
+}, (hk) => {
+   for (const [k, v] of Object.entries(hk)) {
+      console.log(k, v);
+      hotkeys[v] = document.querySelector(k);
+   }
+   console.log(hk);
+   console.log(hotkeys);
+});
+
+
+/* Key tracking + handling **************************************/
 
 kt = new KeyTracker();
 
+document.addEventListener('keydown', (e) => kt.keyDown(e));
 
-document.addEventListener('keydown', (e) => {
-   kt.keyDown(e);
-});
-
-// handles custom editor keyboard shortcuts
+// handles custom editor keyboard shortcuts when all keys released
 document.addEventListener('keyup', (e) => {
    kt.keyUp(e);
 
    if (kt.done) {
-      let key = [...kt.keys].join('-');
+      let keys = [...kt.keys].join('-');
 
-      cases[key]?.click();
+      hotkeys[keys]?.click();
    }
 });
+
+
+
+/* Message routing **********************************************/
+
+let routes = {
+   'c:add_hotkey': addHotkey,
+}
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+   routes[request.route]?.(request);
+   return true; 
+});
+
+function addHotkey() {
+   document.addEventListener('click', disableClick, true);
+   document.addEventListener('mousemove', highlightButtons);
+   
+   document.callback = (btn) => {
+      document.removeEventListener('click', disableClick, true);
+      document.removeEventListener('mousemove', highlightButtons);
+
+      removeHighlight();
+
+      let code = btn.getAttribute('data-code');
+
+      chrome.runtime.sendMessage({
+         route: 'b:set_hotkey',
+         data: {
+            selector: `button[data-code="${code}"]`
+         }
+      });
+   }
+}
+
+
+
+/* UI interaction for adding hotkeys ****************************/
 
 // keeps track of currently hovered object and previous inline style
 let highlighted = {
    obj: null,
    prevStyle: null,
-};
-
-
-chrome.storage.local.get('hotkeys', function(result) {
-   console.log('Value currently is ', result);
-});
-
-chrome.runtime.onMessage.addListener(
-   function(request, sender) {
-      //console.log(sender.tab);
-      if (request.route == 'addShortcut') {
-         document.addEventListener('mousemove', highlightButtons);
-         document.addEventListener('click', disableClick, true);
-         document.callback = (btn) => {
-            console.log("yourbtn", btn);
-
-            document.removeEventListener('click', disableClick, true);
-            document.removeEventListener('mousemove', highlightButtons);
-
-            removeHighlight();
-
-            // check if it exists bro
-            let code = btn.getAttribute('data-code');
-
-            // todo add callback
-            chrome.runtime.sendMessage({selector: `button[data-code="${code}"]`})
-         };
-         return true;
-      }
-   }
-);
-
+}
 
 function disableClick(e) {
    e.stopPropagation();

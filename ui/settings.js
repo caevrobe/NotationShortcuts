@@ -13,11 +13,14 @@ function keyDown(e) {
 
          let range = document.createRange();
          this.innerText = newval;
+         if (newval.length === 0)
+            return;
 
          var sel = window.getSelection();
 
          sel.removeAllRanges();
          sel.addRange(range);
+         console.log('newval', newval)
          range.setStart(this.firstChild, newval.length);
          range.collapse(true);
       }
@@ -34,39 +37,36 @@ function keyDown(e) {
          console.log("???????????????????? HELLO2")
    }
 
-   if (upper === 'BACKSPACE') {
-      let thisval = get();
-
-      if (this.selectionEnd - this.selectionStart === this.value.length) {
-         assign('', (a, b) => b);
-         //this.value = '';
-      } else {
-         let last = thisval.lastIndexOf(' ', thisval.lastIndexOf(' ') - 1);
-         assign(thisval.substring(0, last), (a, b) => b);
-      }
-   } else if (upper === 'A' && e.ctrlKey) {
+   if (upper === 'BACKSPACE')
+      assign('', (a, b) => b);
+   else if (upper === 'A' && e.ctrlKey)
       this.select();
-   } else {
-      if (!kt.keys.has(upper)) {
-         if (kt.done)
-            assign(upper, (a, b) => b);
-            //this.value = upper;
-         else
-            assign(upper, (a, b) => a += ` + ${b}`);
-            //this.value += ` + ${upper}`;
-
-         kt.keyDown(e);
-      }
+   else {
+      kt.keyDown(e);
+      assign(null, () => [...kt.keys].join('-'));
    }
    e.preventDefault();
 }
 
 
+document.getElementById('mappings').addEventListener('mousemove', (e) => {
+   //console.log(e.target.closest('td'));
+});
+
 function keyUp(e) {
    kt.keyUp(e);
 
+   console.log(e);
+
    if (kt.done)
-      console.log('done', kt.keys);
+      chrome.runtime.sendMessage({
+         route: 'b:set_hotkey',
+         data: {
+            selector: e.target.id, 
+            keys: e.target.innerText
+         }
+      });
+      //console.log('done', kt.keys);
 }
 
 
@@ -91,14 +91,17 @@ chrome.storage.local.get({ hotkeys: {} }, (result) => {
       let m_cell = row.insertCell(1);
 
       s_cell.innerText = k;
+      s_cell.classList.add('sel');
 
       m_cell.setAttribute('contenteditable', 'true');
+      m_cell.id = k;
       m_cell.innerText = v;
       m_cell.addEventListener('keydown', keyDown);
       m_cell.addEventListener('keyup', keyUp);
+      m_cell.setAttribute('spellcheck', false);
 
       m_cell.addEventListener('focusout', (e) => {
-         chrome.runtime.sendMessage({selector: k, keycode: m_cell.innerText});
+         chrome.runtime.sendMessage({selector: k, keys: m_cell.innerText});
       });
    }
 });
@@ -109,6 +112,6 @@ chrome.storage.local.get({ hotkeys: {} }, (result) => {
 document.getElementById('submit').addEventListener('click', () => {
    console.log('waiting');
    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { route: 'addShortcut' });
+      chrome.tabs.sendMessage(tabs[0].id, { route: 'c:add_hotkey' });
    });
 });
